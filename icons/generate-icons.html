@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Penpal Icons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            text-align: center;
+        }
+        canvas { display: none; }
+        .icon-preview {
+            margin: 20px;
+            display: inline-block;
+        }
+        a {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Penpal Icon Generator</h1>
+    <p>Click the buttons below to download each icon size:</p>
+
+    <div id="icons"></div>
+
+    <script>
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+
+            // Draw rounded rectangle background
+            const radius = size * 0.2;
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+
+            // Draw "P" letter
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('P', size / 2, size / 2 + size * 0.05);
+
+            return canvas;
+        }
+
+        const sizes = [16, 48, 128];
+        const container = document.getElementById('icons');
+
+        sizes.forEach(size => {
+            const canvas = createIcon(size);
+            const div = document.createElement('div');
+            div.className = 'icon-preview';
+
+            const preview = createIcon(size);
+            preview.style.display = 'block';
+            preview.style.border = '1px solid #ddd';
+            div.appendChild(preview);
+
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `icon${size}.png`;
+            link.textContent = `Download icon${size}.png`;
+            div.appendChild(link);
+
+            container.appendChild(div);
+        });
+    </script>
+</body>
+</html>

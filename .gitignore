@@ -1,0 +1,31 @@
+# Environment variables (NEVER commit these)
+.env
+config.js
+
+# API Keys and Secrets
+**/secrets.js
+**/keys.js
+
+# Node modules (if you add a build process)
+node_modules/
+dist/
+build/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Extension packaging
+*.zip
+*.crx
+*.pem
