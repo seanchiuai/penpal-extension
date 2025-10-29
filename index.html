@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpal - AI Document Editor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="auth-card">
+            <div class="header">
+                <h1>Penpal</h1>
+                <p class="tagline">AI-Powered Document Editor</p>
+            </div>
+
+            <div id="auth-section">
+                <!-- Clerk will inject the sign-in/sign-up components here -->
+                <div id="clerk-mounted"></div>
+            </div>
+
+            <div id="app-section" style="display: none;">
+                <div class="welcome-message">
+                    <h2>Welcome, <span id="user-name"></span>!</h2>
+                    <p id="user-email"></p>
+                </div>
+
+                <div class="features">
+                    <h3>What you can do:</h3>
+                    <ul>
+                        <li>AI-powered document editing</li>
+                        <li>Smart suggestions and improvements</li>
+                        <li>Real-time collaboration</li>
+                        <li>Intelligent formatting</li>
+                    </ul>
+                </div>
+
+                <div class="actions">
+                    <button id="sign-out-btn" class="btn btn-secondary">Sign Out</button>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Powered by Clerk Authentication</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clerk JavaScript SDK -->
+    <script
+        async
+        crossorigin="anonymous"
+        data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY"
+        src="https://[your-clerk-frontend-api].clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+        type="text/javascript"
+    ></script>
+
+    <script src="app.js"></script>
+</body>
+</html>
