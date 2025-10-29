@@ -1,41 +1,43 @@
 # Penpal - Chrome Extension Template
 
-A Chrome extension template with Clerk authentication that displays a "Working" status when authenticated.
+A Chrome extension template with a sidebar panel, Clerk authentication, and a "Working" status indicator when authenticated.
 
 ## Project Structure
 
 ```
 penpal/
 ├── manifest.json          # Chrome extension configuration
-├── popup.html            # Extension popup interface
-├── popup.js              # Popup logic and authentication
-├── popup.css             # Popup styling
-├── config.example.js     # API key configuration template
-├── config.js             # Your API keys (git-ignored, create from example)
-├── .env.example          # Environment variables template
-├── .gitignore            # Git ignore rules (includes config.js)
-├── icons/                # Extension icons
+├── sidebar.html           # Extension sidebar interface
+├── sidebar.js             # Sidebar logic and authentication
+├── sidebar.css            # Sidebar styling
+├── background.js          # Service worker for sidebar control
+├── config.example.js      # API key configuration template
+├── config.js              # Your API keys (git-ignored, create from example)
+├── .env.example           # Environment variables template
+├── .gitignore             # Git ignore rules (includes config.js)
+├── icons/                 # Extension icons
 │   ├── generate-icons.html  # Tool to generate icon files
-│   ├── icon.svg          # Source SVG icon
-│   └── README.md         # Instructions for creating icons
-├── docs/                 # Documentation files
+│   ├── icon.svg           # Source SVG icon
+│   └── README.md          # Instructions for creating icons
+├── docs/                  # Documentation files
 │   ├── API-KEY-SECURITY.md  # API key security guide
 │   ├── QUICK-START.md
 │   ├── PROJECT-SUMMARY.md
 │   ├── SETUP.md
 │   └── google-docs-ai-editor-implementation.md
-├── index.html           # Standalone auth demo page
-├── app.js               # Standalone demo logic
-└── styles.css           # Standalone demo styles
+├── index.html            # Standalone auth demo page
+├── app.js                # Standalone demo logic
+└── styles.css            # Standalone demo styles
 ```
 
 ## Features
 
-- Simple Chrome extension popup interface
-- Clerk authentication integration
-- "Working" status indicator when authenticated
-- User information display
-- Sign out functionality
+- **Sidebar Panel** - Full-height side panel that opens alongside web pages
+- **Clerk Authentication** - Secure user authentication
+- **"Working" Status** - Visual indicator when authenticated
+- **User Information** - Display user name and email
+- **Auto-activation** - Sidebar automatically available on Google Docs
+- **Sign Out** - Easy authentication management
 
 ## Setup Instructions
 
@@ -89,23 +91,33 @@ Alternatively, follow the instructions in `icons/README.md` for other methods.
 
 ### 4. Test the Extension
 
-1. Click the Penpal extension icon in your Chrome toolbar
-2. Sign in using the Clerk authentication form
-3. After successful authentication, you should see:
-   - A green checkmark icon
+1. **Open the sidebar**: Click the Penpal extension icon in your Chrome toolbar
+   - The sidebar panel will open on the right side of your browser
+
+2. **Sign in**: Use the Clerk authentication form in the sidebar
+
+3. **After successful authentication**, you should see:
+   - A large green checkmark icon with animation
    - "Working" status message
    - Your name and email
    - Sign out button
 
+4. **Auto-activation on Google Docs**: Visit any Google Docs page
+   - The sidebar will automatically be available
+   - Click the extension icon to open it
+
 ## Development
 
-### Extension Popup
+### Extension Sidebar
 
-The popup is a compact interface (320x400px) that appears when clicking the extension icon:
+The sidebar is a full-height panel that opens alongside web pages:
 
-- **popup.html** - HTML structure for the popup
-- **popup.js** - Handles authentication and UI state
-- **popup.css** - Styling optimized for the popup size
+- **sidebar.html** - HTML structure for the sidebar
+- **sidebar.js** - Handles authentication and UI state
+- **sidebar.css** - Styling optimized for sidebar layout
+- **background.js** - Service worker that opens the sidebar on icon click
+
+The sidebar uses Chrome's Side Panel API (Manifest V3) for a native side-by-side experience.
 
 ### Standalone Demo
 
@@ -121,11 +133,12 @@ For testing authentication outside the extension context:
 
 Defines the Chrome extension configuration:
 - Extension metadata (name, version, description)
-- Required permissions (storage, activeTab)
-- Popup configuration
+- Required permissions (storage, activeTab, sidePanel)
+- Side panel configuration
+- Background service worker
 - Host permissions for Google Docs
 
-### popup.js
+### sidebar.js
 
 Main logic including:
 - Clerk SDK initialization
@@ -134,41 +147,54 @@ Main logic including:
 - Sign out functionality
 
 Key functions:
-- `mountClerkComponents()` - Sets up Clerk UI components (popup.js:47)
-- `showAppSection()` - Displays authenticated state (popup.js:68)
-- `showAuthSection()` - Shows login form (popup.js:85)
+- `loadClerkSDK()` - Dynamically loads Clerk with config (sidebar.js:2)
+- `mountClerkComponents()` - Sets up Clerk UI components (sidebar.js:75)
+- `showAppSection()` - Displays authenticated state (sidebar.js:96)
+- `showAuthSection()` - Shows login form (sidebar.js:113)
+
+### background.js
+
+Service worker that:
+- Opens the sidebar when extension icon is clicked (background.js:4)
+- Auto-enables sidebar on Google Docs pages (background.js:10)
 
 ## Customization
 
 ### Changing the Status Message
 
-Edit `popup.html` line 18:
+Edit `sidebar.html` line 23:
 ```html
 <h2 class="status-message">Working</h2>
 ```
 
-### Styling the Popup
+### Styling the Sidebar
 
-Modify `popup.css` to customize:
+Modify `sidebar.css` to customize:
 - Colors (current gradient: #667eea to #764ba2)
 - Layout and spacing
 - Animations and transitions
+- Font sizes and typography
+
+The sidebar is designed to be full-height and uses flexible layout for optimal viewing.
 
 ### Adding New Features
 
 The extension currently has minimal functionality. To extend it:
 
-1. Add new UI elements to `popup.html`
-2. Implement logic in `popup.js`
-3. Style with `popup.css`
+1. Add new UI elements to `sidebar.html`
+2. Implement logic in `sidebar.js`
+3. Style with `sidebar.css`
 4. Update `manifest.json` if new permissions are needed
+5. Add content scripts to interact with web pages
+6. Use `background.js` to communicate between components
 
 ## Permissions
 
 Current permissions in `manifest.json`:
 - `storage` - Store user preferences and authentication state
 - `activeTab` - Interact with the current browser tab
-- `https://docs.google.com/*` - Access Google Docs pages
+- `sidePanel` - Enable the side panel functionality
+- `https://docs.google.com/*` - Access Google Docs pages (host permission)
 
 ## Troubleshooting
 
@@ -191,10 +217,19 @@ Current permissions in `manifest.json`:
 - Check that `window.CONFIG` is defined (open DevTools console)
 - Reload the extension after creating `config.js`
 
-### Popup doesn't open
-- Right-click the extension icon and select "Inspect popup"
+### Sidebar doesn't open
+- Make sure you're clicking the extension icon (not right-clicking)
+- Check Chrome version supports Side Panel API (Chrome 114+)
+- Right-click the extension icon and check if "Open side panel" appears
+- Inspect the sidebar: Right-click inside sidebar → "Inspect"
 - Check for JavaScript errors in the DevTools console
-- Verify `popup.html`, `popup.js`, and `popup.css` paths are correct
+- Verify `sidebar.html`, `sidebar.js`, and `sidebar.css` paths are correct
+- Check `background.js` is loaded: Go to `chrome://extensions/` → Details → Service worker
+
+### Sidebar closes immediately
+- Check for JavaScript errors in sidebar DevTools
+- Verify `config.js` exists and is properly formatted
+- Ensure Clerk credentials are valid
 
 ## Next Steps
 

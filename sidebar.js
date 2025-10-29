@@ -88,7 +88,7 @@ function mountClerkComponents(clerk) {
                     socialButtonsVariant: 'iconButton'
                 }
             },
-            redirectUrl: chrome.runtime.getURL('popup.html')
+            redirectUrl: chrome.runtime.getURL('sidebar.html')
         });
     }
 }
