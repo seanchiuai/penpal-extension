@@ -6,8 +6,8 @@ const isWatch = process.argv.includes('--watch');
 
 // Files to bundle
 const entryPoints = {
-  'dist/sidebar': 'sidebar.js',
-  'dist/background': 'background.js',
+  'dist/sidebar': 'extension/sidebar.js',
+  'dist/background': 'extension/background.js',
 };
 
 // Files to copy as-is
@@ -16,24 +16,18 @@ const filesToCopy = [
   'sidebar.html',
   'sidebar.css',
   'config.js',
-  'index.html',
-  'app.js',
-  'styles.css',
 ];
 
 // Directories to copy
-const dirsToCopy = [
-  'icons',
-];
+const dirsToCopy = ['icons'];
 
 async function build() {
   try {
-    // Create dist directory
     if (!fs.existsSync('dist')) {
       fs.mkdirSync('dist');
     }
 
-    // Bundle JavaScript files with esbuild
+    // Bundle JavaScript files
     const buildOptions = {
       entryPoints,
       bundle: true,
@@ -53,27 +47,29 @@ async function build() {
       await esbuild.build(buildOptions);
     }
 
-    // Copy static files
+    // Copy static files from extension/
     filesToCopy.forEach(file => {
-      if (fs.existsSync(file)) {
-        fs.copyFileSync(file, path.join('dist', file));
+      const src = path.join('extension', file);
+      const dest = path.join('dist', file);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, dest);
         console.log(`Copied: ${file}`);
       }
     });
 
-    // Copy directories
+    // Copy directories from extension/
     dirsToCopy.forEach(dir => {
-      if (fs.existsSync(dir)) {
-        const destDir = path.join('dist', dir);
-        if (!fs.existsSync(destDir)) {
-          fs.mkdirSync(destDir, { recursive: true });
+      const src = path.join('extension', dir);
+      const dest = path.join('dist', dir);
+      if (fs.existsSync(src)) {
+        if (!fs.existsSync(dest)) {
+          fs.mkdirSync(dest, { recursive: true });
         }
-
-        const files = fs.readdirSync(dir);
+        const files = fs.readdirSync(src);
         files.forEach(file => {
           fs.copyFileSync(
-            path.join(dir, file),
-            path.join(destDir, file)
+            path.join(src, file),
+            path.join(dest, file)
           );
         });
         console.log(`Copied directory: ${dir}`);
