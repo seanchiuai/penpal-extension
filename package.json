@@ -1,0 +1,15 @@
+{
+  "name": "penpal-ai-editor",
+  "version": "1.0.0",
+  "description": "AI-powered document editing assistant",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  },
+  "dependencies": {
+    "@clerk/clerk-js": "^5.0.0"
+  }
+}

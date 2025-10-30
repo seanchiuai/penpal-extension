@@ -1,42 +1,16 @@
-// Load Clerk SDK dynamically with config
-function loadClerkSDK() {
-    return new Promise((resolve, reject) => {
-        // Check if config is loaded
-        if (typeof window.CONFIG === 'undefined') {
-            reject(new Error('Config file not loaded. Please create config.js from config.example.js'));
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.async = true;
-        script.crossOrigin = 'anonymous';
-        script.setAttribute('data-clerk-publishable-key', window.CONFIG.CLERK_PUBLISHABLE_KEY);
-        script.src = `https://${window.CONFIG.CLERK_FRONTEND_API}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
-        script.type = 'text/javascript';
-
-        script.onload = resolve;
-        script.onerror = reject;
-
-        document.head.appendChild(script);
-    });
-}
+// Import Clerk from bundled local file
+import { Clerk } from '@clerk/clerk-js';
 
 // Wait for Clerk to load
 window.addEventListener('load', async () => {
     try {
-        // Load Clerk SDK dynamically
-        await loadClerkSDK();
-
-        // Wait a moment for Clerk to initialize
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Check if Clerk is available
-        if (typeof Clerk === 'undefined') {
-            throw new Error('Clerk SDK failed to load');
+        // Check if config is loaded
+        if (typeof window.CONFIG === 'undefined') {
+            throw new Error('Config file not loaded. Please create config.js');
         }
 
-        // Initialize Clerk
-        const clerk = window.Clerk;
+        // Initialize Clerk with publishable key
+        const clerk = new Clerk(window.CONFIG.CLERK_PUBLISHABLE_KEY);
 
         // Wait for Clerk to be ready
         await clerk.load();
